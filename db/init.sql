@@ -26,3 +26,4 @@ INSERT INTO products (name, description, image_url, price, stock)
 VALUES ('Product 1', 'Description 1', 'https://m.media-amazon.com/images/I/81DwU9DYBvL.jpg', 19.99, 10),
        ('Product 2', 'Description 2', 'https://m.media-amazon.com/images/I/51uWZNm+bXL._SL500_.jpg', 29.99, 5);
 
+-- quiero asegurarme de que hago commit de toda la carpeta xd

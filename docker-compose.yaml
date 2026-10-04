@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: hamza_mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: mi_base_datos
+      MYSQL_USER: usuario_db
+      MYSQL_PASSWORD: password_db
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - hamza_app_network
+    labels:
+      autor: "Hamza"
+
+  api-login:
+    build:
+      context: ./login
+    container_name: hamza_api_login
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      DB_HOST: mysql
+      DB_USER: usuario_db
+      DB_PASSWORD: password_db
+      DB_NAME: mi_base_datos
+    depends_on:
+      - mysql
+    networks:
+      - hamza_app_network
+    labels:
+      autor: "Hamza"
+
+  api-products:
+    build:
+      context: ./api
+    container_name: hamza_api_products
+    restart: always
+    ports:
+      - "5001:5001"
+    environment:
+      DB_HOST: mysql
+      DB_USER: usuario_db
+      DB_PASSWORD: password_db
+      DB_NAME: mi_base_datos
+    depends_on:
+      - mysql
+    networks:
+      - hamza_app_network
+    labels:
+      autor: "Hamza"
+
+  frontend:
+    build:
+      context: ./php
+    container_name: hamza_frontend_apache
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      LOGIN_SERVICE: "http://localhost:5000"
+      API_SERVICE: "http://localhost:5001"
+    depends_on:
+      - api-login
+      - api-products
+    networks:
+      - hamza_app_network
+    labels:
+      autor: "Hamza"
+
+volumes:
+  db_data:
+
+networks:
+  hamza_app_network:
+    driver: bridge
